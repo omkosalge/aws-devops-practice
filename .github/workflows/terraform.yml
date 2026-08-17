@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: Terraform CI
+
+  terraform-plan:
+    name: Terraform Plan
     runs-on: ubuntu-latest
 
     defaults:
@@ -27,7 +28,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::110120892990:role/GitHubActions-Terraform-Role
           aws-region: ap-south-1
-          role-session-name: GitHubActions-Terraform-Session
+          role-session-name: GitHubActions-Terraform-Plan
 
       - name: Verify AWS Identity
         run: aws sts get-caller-identity
@@ -47,3 +48,38 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
+
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::110120892990:role/GitHubActions-Terraform-Role
+          aws-region: ap-south-1
+          role-session-name: GitHubActions-Terraform-Apply
+
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
