@@ -1,20 +1,10 @@
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-x86_64"]
-  }
-
-  filter {
-    name   = "architecture"
-    values = ["x86_64"]
-  }
+moved {
+  from = aws_instance.practice_server
+  to   = aws_instance.devops_terraform_control
 }
 
-resource "aws_instance" "practice_server" {
-  ami           = data.aws_ami.amazon_linux.id
+resource "aws_instance" "devops_terraform_control" {
+  ami           = "ami-05a1f40ec1f9ea141"
   instance_type = var.instance_type
 
   tags = {
