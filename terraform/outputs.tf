@@ -1,15 +1,20 @@
-output "instance_id" {
-  description = "ID of the Terraform-created EC2 instance"
-  value       = aws_instance.devops_terraform_control.id
+output "instance_ids" {
+  value = {
+    for key, instance in aws_instance.devops_terraform_nodes :
+    key => instance.id
+  }
 }
 
-output "private_ip" {
-  description = "Private IP address of the EC2 instance"
-  value       = aws_instance.devops_terraform_control.private_ip
+output "private_ips" {
+  value = {
+    for key, instance in aws_instance.devops_terraform_nodes :
+    key => instance.private_ip
+  }
 }
 
-output "public_ip" {
-  description = "Public IP address of the EC2 instance"
-  value       = aws_instance.devops_terraform_control.public_ip
+output "public_ips" {
+  value = {
+    for key, instance in aws_instance.devops_terraform_nodes :
+    key => instance.public_ip
+  }
 }
-
