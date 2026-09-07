@@ -13,6 +13,9 @@ resource "aws_instance" "devops_terraform_control" {
     ManagedBy   = "Terraform"
     Project     = "aws-devops-practice"
   }
+  depends_on = [
+    aws_s3_bucket.dependency_bucket
+  ]
 
   lifecycle {
     ignore_changes = [
